@@ -7,7 +7,7 @@ var request = require('request');
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
-app.set('port', 3000);
+app.set('port', 35001);
 app.use(express.static('public'));
 
 app.get('/',function(req,res,next){
@@ -17,10 +17,26 @@ app.get('/',function(req,res,next){
             next(err);
             return;
         }
-        context.results = JSON.stringify(rows);
+        context.results = rows;
         res.render('home', context);
     });
 });
+
+app.get('/insert',function(req,res,next){
+    var context = {};
+    mysql.pool.query("INSERT INTO workouts (`name`) VALUES (?)", [req.query.c], function(err, result){
+        if(err){
+            next(err);
+            return;
+        }
+        context.results = "Inserted id " + result.insertId;
+        res.render('home',context);
+    });
+});
+
+app.get('/edit', function (req,res, next){
+    res.render('edit')
+})
 
 /* ----------------------------- RESET TABLE --------------------------------------------- */
 
