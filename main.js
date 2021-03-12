@@ -14,7 +14,6 @@ app.set('port', 35001);
 app.use(express.static('public'));
 
 
-
 app.get('/',function(req,res,next){
     var context = {};
     mysql.pool.query('SELECT * FROM workouts', function(err, rows, fields){
@@ -39,35 +38,43 @@ app.post('/added',function(req,res){
         }
     })
         res.render('added');
-})
+});
 
-app.get('/safe-update',function(req,res,next){
-    var context = {};
-    var selecteditem = [[]]
-    mysql.pool.query("SELECT * FROM workouts WHERE name=?", [req.query.name], function(err, result){
+
+app.get('/edit',function(req,res,next){
+    var id_num = {id:req.query.id}
+    mysql.pool.query("SELECT * FROM workouts WHERE id=?", [req.query.id], function(err, result){
         if(err){
             next(err);
             return;
         }
-        if(result.length == 1){
-            var curVals = result[0];
-            mysql.pool.query("UPDATE todo SET name=?, done=?, due=? WHERE id=? ",
-                [req.query.name || curVals.name, req.query.done || curVals.done, req.query.due || curVals.due, req.query.id],
-                function(err, result){
-                    if(err){
-                        next(err);
-                        return;
-                    }
-                    context.results = "Updated " + result.changedRows + " rows.";
-                    res.render('home',context);
-                });
-        }
+        res.render('edit',id_num)
     });
 });
 
-app.get('/edit', function (req,res, next){
-    res.render('edit')
-})
+app.post('/editSuccessful', function (req,res,next){
+    var data = [req.body.name,req.body.reps,req.body.weight,req.body.date,req.body.lbs, req.query.id]
+    console.log(data)
+    mysql.pool.query("UPDATE workouts SET name=?, reps=?, weight=?, date=?, lbs=? WHERE id=? ", data,
+        function (err,result){
+        if(err){
+            next(err);
+            return;
+        }
+        res.render('editSuccessful');
+        });
+});
+
+app.get('/delete',function (req,res,next){
+    mysql.pool.query("DELETE FROM workouts WHERE id=?", [req.query.id] ,
+        function (err,result){
+        if(err){
+            next(err);
+            return;
+        }
+        res.render('deleted')
+    });
+});
 
 /* ----------------------------- RESET TABLE --------------------------------------------- */
 

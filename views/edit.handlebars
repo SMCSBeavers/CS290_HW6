@@ -1,14 +1,22 @@
+<style>
+    body {
+        background-color: lightgray;
+    }
+</style>
 <h2>Edit</h2>
-<form>
-    <label for="name">Exercise:</label><br>
-    <input type="text" id="name" name="name"><br>
-    <label for="reps">Reps:</label><br>
-    <input type="number" id="reps" name="reps"><br>
-    <label for="weight">Weight:</label><br>
-    <input type="number" id="weight" name="weight"><br>
-    <label for="date">Date:</label><br>
-    <input type="date" id="date" name="date"><br>
-    <label for="lbs">Lbs?</label><br>
-    <input type="checkbox" id="lbs" name="lbs"><br>
-    <button id='edit_exercise' type="button">Edit</button>
+<form action="/editSuccessful?id={{this.id}}" method="post">
+    <fieldset style="width: 50%">
+        <label for="name">Exercise:</label><br>
+        <input type="text" id="name" name="name"><br>
+        <label for="reps">Reps:</label><br>
+        <input type="number" id="reps" name="reps"><br>
+        <label for="weight">Weight:</label><br>
+        <input type="number" id="weight" name="weight"><br>
+        <label for="date">Date:</label><br>
+        <input type="date" id="date" name="date"><br>
+        <label for="lbs">Lbs?</label><br>
+        <input type="checkbox" id="lbs" name="lbs" value="1"><br>
+        <input type="submit" value="Edit Exercise" id="submitButton">
+        <a href="/">Return</a>
+    </fieldset>
 </form>

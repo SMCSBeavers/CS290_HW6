@@ -6,15 +6,12 @@
     table, th, td {
     border: 1px solid black;
     border-collapse: collapse;
-        padding: 5px;
+        padding: 3px;
         margin: 10px;
 }
 </style>
-<script>
-
-
-</script>
 <h1>Workout</h1>
+<h3>(No AJAX)</h3>
 <form action="/added" method="post">
     <fieldset style="width: 50%">
     <label for="name">Exercise:</label><br>
@@ -26,8 +23,8 @@
     <label for="date">Date:</label><br>
     <input type="date" id="date" name="date"><br>
     <label for="lbs">Lbs?</label><br>
-    <input type="checkbox" id="lbs" name="lbs"><br>
-    <input type="submit" value="Add Exercise" id="addExercise">
+    <input type="checkbox" id="lbs" name="lbs" value="1"><br>
+    <input type="submit" value="Add Exercise" id="submitButton">
     </fieldset>
 </form>
 <table style="width:50%">
@@ -44,9 +41,11 @@
         <td>{{this.reps}}</td>
         <td>{{this.weight}}</td>
         <td>{{this.date}}</td>
-        <td>{{this.lbs}}</td>
-        <td><input type="button" value="Edit"></td>
-        <td><input type="button" value="Delete"></td>
+        <td>{{#if this.lbs}}
+            &#9989;
+        {{/if}}</td>
+        <td><a href="/edit?id={{this.id}}">Edit</a></td>
+        <td><a href="/delete?id={{this.id}}">Delete</a></td>
     </tr>
     {{/each}}
 </table>
