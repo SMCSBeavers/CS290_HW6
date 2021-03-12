@@ -4,11 +4,16 @@ var mysql = require('./dbcon.js')
 var app = express();
 var handlebars = require('express-handlebars').create({defaultLayout:'main'});
 var request = require('request');
+var bodyParser = require("body-parser");
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set('port', 35001);
 app.use(express.static('public'));
+
+
 
 app.get('/',function(req,res,next){
     var context = {};
@@ -22,15 +27,41 @@ app.get('/',function(req,res,next){
     });
 });
 
-app.get('/insert',function(req,res,next){
+app.post('/added',function(req,res){
+    var payload= [[req.body.name,req.body.reps,req.body.weight,req.body.date,req.body.lbs]]
+    console.log(payload)
+    mysql.pool.query('INSERT INTO workouts (name,reps,weight,date,lbs) VALUES (?)',payload,function(err,res){
+        if(err){
+            throw err;
+        }
+        else{
+            console.log(res);
+        }
+    })
+        res.render('added');
+})
+
+app.get('/safe-update',function(req,res,next){
     var context = {};
-    mysql.pool.query("INSERT INTO workouts (`name`) VALUES (?)", [req.query.c], function(err, result){
+    var selecteditem = [[]]
+    mysql.pool.query("SELECT * FROM workouts WHERE name=?", [req.query.name], function(err, result){
         if(err){
             next(err);
             return;
         }
-        context.results = "Inserted id " + result.insertId;
-        res.render('home',context);
+        if(result.length == 1){
+            var curVals = result[0];
+            mysql.pool.query("UPDATE todo SET name=?, done=?, due=? WHERE id=? ",
+                [req.query.name || curVals.name, req.query.done || curVals.done, req.query.due || curVals.due, req.query.id],
+                function(err, result){
+                    if(err){
+                        next(err);
+                        return;
+                    }
+                    context.results = "Updated " + result.changedRows + " rows.";
+                    res.render('home',context);
+                });
+        }
     });
 });
 
